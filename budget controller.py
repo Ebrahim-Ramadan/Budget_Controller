@@ -100,6 +100,8 @@ class App(tk.Tk):
             self, text="For Financial Education Resources", fg="blue", cursor="hand2", font=self.smoll_font)
         link_label.place(x=200, y=332)
         link_label.bind("<Button-1>", lambda event: self.open_link())
+        link_label.bind("<Enter>", lambda e: link_label.config(fg='red'))
+        link_label.bind("<Leave>", lambda e: link_label.config(fg='blue'))
 
     def saving_data_sqlite3(self):
         self.income = self.incomeInput.get()
@@ -174,6 +176,10 @@ class App(tk.Tk):
         vis = ttk.Button(self, text='Show Savings Tracker', command=self.vis)
         vis.place(x=90, y=525)
 
+        bill = ttk.Button(self, text="Remind Me Of A Bill ",
+                          command=self.Bill_Reminder)
+        bill.place(x=215, y=525)
+
     def savingsave(self):
         current_time = datetime.datetime.now()
         year = current_time.year
@@ -187,7 +193,7 @@ class App(tk.Tk):
         target = self.savingsTarget.get()
         target = float(target)
         if target:
-            notification.notify(title="Target Set",
+            notification.notify(app_name="Budget Controller ", title='Target Setting',
                                 message=f"Savings Targetted to {target} at {AFTERTIME} you will be notified when reached to")
         return AFTERTIME
 
@@ -204,12 +210,43 @@ class App(tk.Tk):
         plt.plot(x, y, linestyle='--', linewidth=2, color='green')
         plt.xlabel('Index')
         plt.ylabel('Savings')
-        plt.title('Line Graph Scattering')
+        plt.title('Savings Tracker')
         plt.show()
 
     def open_link(self):
         webbrowser.open(
             "https://www.cnbc.com/select/how-to-create-a-budget-guide/")
+
+    def Bill_Reminder(self):
+        self.rtt = tk.Toplevel(self)
+        self.rtt.title("Bills Reminder")
+        cal = Calendar(self.rtt, selectmode="day", year=2023, month=4, day=30)
+        cal.pack(padx=10, pady=10)
+
+        billo1 = ttk.Label(self.rtt, text='The Bill')
+        billo1.pack(padx=5, pady=10)
+        BillName = ttk.Entry(self.rtt)
+        BillName.pack()
+
+        billo2 = ttk.Label(self.rtt, text='The Bill Amount')
+        billo2.pack(padx=10, pady=10)
+        BillAmount = ttk.Entry(self.rtt)
+        BillAmount.pack()
+
+        def select_date():
+            selected_date = cal.get_date()
+            TheBillName = BillName.get()
+            TheBillAmount = BillAmount.get()
+            print("You selected:", selected_date)
+            notification.notify(
+                app_name="Budget Controller ", title='Target Setting', message=f"the Bill {TheBillName} of {TheBillAmount} is set to be remind you at {selected_date} \n have a nice day<3")
+            # k.destroy()
+            cal.selection_clear()
+            BillName.delete(0, 'end')
+            BillAmount.delete(0, 'end')
+        billybtn = ttk.Button(self.rtt, text="Remind",
+                              command=select_date)
+        billybtn.pack(pady=10)
 
     def OPEN_Needs_win(self):
         NeedsWIN = tk.Toplevel(self)
