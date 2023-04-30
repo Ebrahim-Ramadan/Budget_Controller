@@ -221,7 +221,8 @@ class App(tk.Tk):
         plt.show()
 
     def open_link(self):
-        webbrowser.open("https://www.google.com/")
+        webbrowser.open(
+            "https://www.cnbc.com/select/how-to-create-a-budget-guide/")
 
     def OPEN_Needs_win(self):
         NeedsWIN = tk.Toplevel(self)
