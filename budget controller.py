@@ -1,6 +1,6 @@
 # this Budget Controller is developed by Ebrahim Ramadan - ID:320220029
 
-
+import datetime
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.font as font
@@ -12,6 +12,7 @@ import pygame
 from plyer import notification
 import csv
 import matplotlib.pyplot as plt
+import webbrowser  # for fin documents (bc they are students)
 
 
 c = sqlite3.connect('aya_budget.sqlite3')
@@ -36,7 +37,7 @@ class App(tk.Tk):
         self.BGessentials()
 
     def BGessentials(self):
-        img = Image.open("Picture1-removebg-preview.png")
+        img = Image.open("Budget_Controller/Picture1-removebg-preview.png")
         img = img.resize((200, 200))
         self.photo = ImageTk.PhotoImage(img)
         # i had to save the bg pic as class instance var
@@ -105,8 +106,13 @@ class App(tk.Tk):
         line = tk.Label(self, text="______________________"*3)
         line.config(fg=('#7B87BB'))
         line.place(x=130, y=340)
+
         # label.config(fg=("#00000080"))
         self.savingsTOTAL = []
+        link_label = tk.Label(
+            self, text="For Financial Education Resources", fg="blue", cursor="hand2", font=self.smoll_font)
+        link_label.place(x=200, y=332)
+        link_label.bind("<Button-1>", lambda event: self.open_link())
 
     def saving_data_sqlite3(self):
         self.income = self.incomeInput.get()
@@ -126,7 +132,8 @@ class App(tk.Tk):
             c.commit()
 
         pygame.mixer.init()
-        coin_sound = pygame.mixer.Sound('scale-f6-106128.wav')
+        coin_sound = pygame.mixer.Sound(
+            'Budget_Controller/scale-f6-106128.wav')
         coin_sound.play()
         # istill dounno how it works but i did ut like thi (first time)
         pygame.time.wait(1500)
@@ -171,7 +178,7 @@ class App(tk.Tk):
         if target is not None and float(sum(self.savingsTOTAL)) >= float(target):
             # notification settings
             title = 'Budget Tracker'
-            message = f'You have reached your target of savings({target})!'
+            message = f'You have reached your target of savings({target} that was set at {self.savingsave()})!'
             notification.notify(title=title, message=message)
             self.savingset.destroy()
             self.savingsTarget.destroy()
@@ -181,12 +188,21 @@ class App(tk.Tk):
         vis.place(x=90, y=525)
 
     def savingsave(self):
+        current_time = datetime.datetime.now()
+        year = current_time.year
+        month = current_time.month
+        day = current_time.day
+        hour = current_time.hour
+        minute = current_time.minute
+        AFTERTIME = "{}-{}-{} ({}:{}).".format(
+            year, month, day, hour, minute)
         global target
         target = self.savingsTarget.get()
         target = float(target)
         if target:
             notification.notify(title="Target Set",
-                                message=f"Savings Targetted to {target}, you will be notified when reached to")
+                                message=f"Savings Targetted to {target} at {AFTERTIME} you will be notified when reached to")
+        return AFTERTIME
 
     def TargetSavings(self):
         self.savingsTarget = ttk.Entry(self)
@@ -203,6 +219,9 @@ class App(tk.Tk):
         plt.ylabel('Savings')
         plt.title('Line Graph Scattering')
         plt.show()
+
+    def open_link(self):
+        webbrowser.open("https://www.google.com/")
 
     def OPEN_Needs_win(self):
         NeedsWIN = tk.Toplevel(self)
