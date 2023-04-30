@@ -1,18 +1,5 @@
 # this Budget Controller is developed by Ebrahim Ramadan - ID:320220029
-
-import datetime
-import tkinter as tk
-import tkinter.ttk as ttk
-import tkinter.font as font
-from tkinter import messagebox
-from PIL import ImageTk, Image
-import sqlite3
-# import pickle
-import pygame
-from plyer import notification
-import csv
-import matplotlib.pyplot as plt
-import webbrowser  # for fin documents (bc they are students)
+from packages import *
 
 
 c = sqlite3.connect('aya_budget.sqlite3')
@@ -37,7 +24,7 @@ class App(tk.Tk):
         self.BGessentials()
 
     def BGessentials(self):
-        img = Image.open("Budget_Controller/Picture1-removebg-preview.png")
+        img = Image.open("Picture1-removebg-preview.png")
         img = img.resize((200, 200))
         self.photo = ImageTk.PhotoImage(img)
         # i had to save the bg pic as class instance var
@@ -133,7 +120,7 @@ class App(tk.Tk):
 
         pygame.mixer.init()
         coin_sound = pygame.mixer.Sound(
-            'Budget_Controller/scale-f6-106128.wav')
+            'scale-f6-106128.wav')
         coin_sound.play()
         # istill dounno how it works but i did ut like thi (first time)
         pygame.time.wait(1500)
