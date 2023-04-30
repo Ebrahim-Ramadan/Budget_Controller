@@ -122,7 +122,7 @@ class App(tk.Tk):
         coin_sound = pygame.mixer.Sound(
             'scale-f6-106128.wav')
         coin_sound.play()
-        # istill dounno how it works but i did ut like thi (first time)
+        # istill doun   no how it works but i did ut like thi (first time)
         pygame.time.wait(1500)
 
         # calculating the nbeeds, wants, and savings values
