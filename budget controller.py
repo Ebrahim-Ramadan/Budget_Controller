@@ -244,7 +244,7 @@ class App(tk.Tk):
             cal.selection_clear()
             BillName.delete(0, 'end')
             BillAmount.delete(0, 'end')
-        billybtn = ttk.Button(self.rtt, text="Remind",
+        billybtn = ttk.Button(self.rtt, text="Set",
                               command=select_date)
         billybtn.pack(pady=10)
 
