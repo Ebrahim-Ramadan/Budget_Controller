@@ -35,7 +35,7 @@ class App(tk.Tk):
         BIG_font = font.Font(family="Hero", size=20, weight="bold")
         self.smoll_font = font.Font(family="Hero", size=10, weight="bold")
         self.median_font = font.Font(family="Hero", size=12, weight="bold")
-
+        self.app_icon = 'Picture1-removebg-preview.ico'
         monthlyLABEL = ttk.Label(
             self, text='MONTHLY \n BUDGET', font=BIG_font)
         monthlyLABEL.place(x=100, y=50)
@@ -168,7 +168,8 @@ class App(tk.Tk):
             # notification settings
             title = 'Budget Tracker'
             message = f'You have reached your target of savings({target} that was set at {self.savingsave()})!'
-            notification.notify(title=title, message=message)
+            notification.notify(title=title, message=message,
+                                app_icon=self.app_icon)
             self.savingset.destroy()
             self.savingsTarget.destroy()
 
@@ -194,7 +195,7 @@ class App(tk.Tk):
         target = float(target)
         if target:
             notification.notify(app_name="Budget Controller ", title='Target Setting',
-                                message=f"Savings Targetted to {target} at {AFTERTIME} you will be notified when reached to")
+                                message=f"Savings Targetted to {target} at {AFTERTIME} you will be notified when reached to", app_icon=self.app_icon)
         return AFTERTIME
 
     def TargetSavings(self):
@@ -220,7 +221,8 @@ class App(tk.Tk):
     def Bill_Reminder(self):
         self.rtt = tk.Toplevel(self)
         self.rtt.title("Bills Reminder")
-        cal = Calendar(self.rtt, selectmode="day", year=2023, month=4, day=30)
+        cal = Calendar(self.rtt, selectmode="day",
+                       year=2023, month=4, day=30, hour=24)
         cal.pack(padx=10, pady=10)
 
         billo1 = ttk.Label(self.rtt, text='The Bill')
@@ -234,16 +236,46 @@ class App(tk.Tk):
         BillAmount.pack()
 
         def select_date():
-            selected_date = cal.get_date()
+            selecteddate = cal.selection_get()
+            selecteddatetime = datetime.combine(
+                selecteddate, datetime.now().time())
             TheBillName = BillName.get()
             TheBillAmount = BillAmount.get()
-            print("You selected:", selected_date)
-            notification.notify(
-                app_name="Budget Controller ", title='Target Setting', message=f"the Bill {TheBillName} of {TheBillAmount} is set to be remind you at {selected_date} \n have a nice day<3")
-            # k.destroy()
-            cal.selection_clear()
-            BillName.delete(0, 'end')
-            BillAmount.delete(0, 'end')
+
+            if TheBillAmount.isdigit() or (TheBillAmount.startswith('-') and TheBillAmount[1:].isdigit()):
+                if TheBillName != '':
+                    if selecteddatetime > datetime.now():
+                        # calculate time delta between current time and selected datetime
+                        delta = selecteddatetime - datetime.now()
+                        delay = delta.total_seconds()
+
+                        # schedule notification with the selected information
+                        title = 'Billing Reminder'
+                        message = f"Reminder: Your {TheBillName} bill of {TheBillAmount}$ is due on {selecteddatetime.date()}"
+                        notification_thread = threading.Timer(delay, notification.notify, args=(
+                            [title, message], {'app_name': 'Budget Controller', 'app_icon': self.app_icon}))
+                        notification_thread.start()
+                        # notification.notify(
+                        #     message=selecteddate, title='Bill stacked to remindings', app_icon='Picture1-removebg-preview.ico')
+                        # clear inputs and close the window
+                        BillName.delete(0, 'end')
+                        BillAmount.delete(0, 'end')
+                        cal.selection_clear()
+                        self.rtt.destroy()
+
+                    else:
+                        messagebox.showerror(
+                            title='Invalid Date', message='Please select a future date and time for the reminder.')
+                else:
+                    messagebox.showerror(
+                        title='Missing Information', message='Please enter the bill name.')
+            else:
+                messagebox.showerror(
+                    title='Invalid Amount', message='Please enter a valid numeric value for the bill amount.')
+
+        cal.selection_clear()
+        BillName.delete(0, 'end')
+        BillAmount.delete(0, 'end')
         billybtn = ttk.Button(self.rtt, text="Set",
                               command=select_date)
         billybtn.pack(pady=10)
