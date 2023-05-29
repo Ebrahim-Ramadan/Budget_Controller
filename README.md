@@ -7,5 +7,3 @@ The Features:
  
 The Student also can set a goal for the savings along with the months as when reached to, he'll be notified (plyer.notification)
 he also has financial edu resources to help him manage so
-there's a feature tracking the savings and the savings' goals each time, and show it in a graph scattering
-I am implementing a bills reminder rn but having err in the schedule funciton, please help
